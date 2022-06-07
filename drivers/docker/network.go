@@ -28,17 +28,24 @@ func (d *Driver) CreateNetwork(allocID string, createSpec *drivers.NetworkCreate
 		return nil, false, fmt.Errorf("failed to connect to docker daemon: %s", err)
 	}
 
-	repo, _ := parseDockerImage(d.config.InfraImage)
-	authOptions, err := firstValidAuth(repo, []authBackend{
-		authFromDockerConfig(d.config.Auth.Config),
-		authFromHelper(d.config.Auth.Helper),
-	})
-	if err != nil {
-		d.logger.Debug("auth failed for infra container image pull", "image", d.config.InfraImage, "error", err)
-	}
-	_, err = d.coordinator.PullImage(d.config.InfraImage, authOptions, allocID, noopLogEventFn, d.config.infraImagePullTimeoutDuration, d.config.pullActivityTimeoutDuration)
-	if err != nil {
-		return nil, false, err
+	repo, tag := parseDockerImage(d.config.InfraImage)
+
+	// Pull the InfraImage only if it doesn't exist locally, or uses the "latest" tag
+	if dockerImage, _ := client.InspectImage(d.config.InfraImage); dockerImage == nil || tag == "latest" {
+		authOptions, err := firstValidAuth(repo, []authBackend{
+			authFromDockerConfig(d.config.Auth.Config),
+			authFromHelper(d.config.Auth.Helper),
+		})
+		if err != nil {
+			d.logger.Debug("auth failed for infra container image pull", "image", d.config.InfraImage, "error", err)
+		}
+		_, err = d.coordinator.PullImage(d.config.InfraImage, authOptions, allocID, noopLogEventFn, d.config.infraImagePullTimeoutDuration, d.config.pullActivityTimeoutDuration)
+		if err != nil {
+			return nil, false, err
+		}
+	} else {
+		// Image exists, so just increment its reference count
+		d.coordinator.IncrementImageReference(dockerImage.ID, d.config.InfraImage, allocID)
 	}
 
 	config, err := d.createSandboxContainerConfig(allocID, createSpec)
