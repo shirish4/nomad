@@ -94,5 +94,6 @@ func TestOperator_SchedulerSetConfiguration(t *testing.T) {
 	require.Equal(t, schedulerConfig.SchedulerConfig.SchedulerAlgorithm, SchedulerAlgorithmSpread)
 	require.True(t, schedulerConfig.SchedulerConfig.PauseEvalBroker)
 	require.True(t, schedulerConfig.SchedulerConfig.RejectJobRegistration)
+	require.True(t, schedulerConfig.SchedulerConfig.MemoryOversubscriptionEnabled)
 	require.Equal(t, newSchedulerConfig.PreemptionConfig, schedulerConfig.SchedulerConfig.PreemptionConfig)
 }

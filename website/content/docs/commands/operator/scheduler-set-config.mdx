@@ -29,7 +29,7 @@ capability.
   allocations on available nodes. Must be one of `["binpack"|"spread"]`.
 
 - `-memory-oversubscription` - When true, tasks may exceed their reserved memory
-  limit, if the client has excess memory capacity. Tasks must specify memory_max
+  limit, if the client has excess memory capacity. Tasks must specify [`memory_max`]
   to take advantage of memory oversubscription. Must be one of `[true|false]`.
 
 - `-reject-job-registration` - When true, the server will return permission denied
@@ -66,3 +66,5 @@ Modify the scheduler algorithm to spread:
 $ nomad operator scheduler set-config -scheduler-algorithm=spread
 Scheduler configuration updated!
 ```
+
+[`memory_max`]: /docs/job-specification/resources#memory_max

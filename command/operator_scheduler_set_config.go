@@ -32,14 +32,17 @@ type OperatorSchedulerSetConfig struct {
 func (o *OperatorSchedulerSetConfig) AutocompleteFlags() complete.Flags {
 	return mergeAutocompleteFlags(o.Meta.AutocompleteFlags(FlagSetClient),
 		complete.Flags{
-			"-scheduler-algorithm":           complete.PredictAnything,
-			"-memory-oversubscription":       complete.PredictAnything,
-			"-reject-job-registration":       complete.PredictAnything,
-			"-pause-eval-broker":             complete.PredictAnything,
-			"-preemption-batch-scheduler":    complete.PredictAnything,
-			"-preemption-service-scheduler":  complete.PredictAnything,
-			"-preemption-sysbatch-scheduler": complete.PredictAnything,
-			"-preemption-system-scheduler":   complete.PredictAnything,
+			"-scheduler-algorithm": complete.PredictSet(
+				string(api.SchedulerAlgorithmBinpack),
+				string(api.SchedulerAlgorithmSpread),
+			),
+			"-memory-oversubscription":       complete.PredictSet("true", "false"),
+			"-reject-job-registration":       complete.PredictSet("true", "false"),
+			"-pause-eval-broker":             complete.PredictSet("true", "false"),
+			"-preemption-batch-scheduler":    complete.PredictSet("true", "false"),
+			"-preemption-service-scheduler":  complete.PredictSet("true", "false"),
+			"-preemption-sysbatch-scheduler": complete.PredictSet("true", "false"),
+			"-preemption-system-scheduler":   complete.PredictSet("true", "false"),
 		},
 	)
 }
@@ -65,7 +68,6 @@ func (o *OperatorSchedulerSetConfig) Run(args []string) int {
 	flags.Var(&o.preemptionSystemScheduler, "preemption-system-scheduler", "")
 
 	if err := flags.Parse(args); err != nil {
-		o.Ui.Error(fmt.Sprintf("Failed to parse args: %v", err))
 		return 1
 	}
 

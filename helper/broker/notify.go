@@ -97,12 +97,10 @@ func (g *GenericNotifier) WaitForChange(timeout time.Duration) interface{} {
 
 	// Enter the main loop which listens for an update or timeout and returns
 	// this information to the subscriber.
-	for {
-		select {
-		case <-timeoutTimer.C:
-			return "wait timed out after " + timeout.String()
-		case update := <-updateCh:
-			return update
-		}
+	select {
+	case <-timeoutTimer.C:
+		return "wait timed out after " + timeout.String()
+	case update := <-updateCh:
+		return update
 	}
 }

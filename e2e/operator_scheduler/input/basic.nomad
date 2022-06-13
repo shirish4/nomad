@@ -1,6 +1,6 @@
 job "operator_scheduler" {
   datacenters = ["dc1"]
-  type        = "service"
+  type        = "batch"
 
   constraint {
     attribute = "${attr.kernel.name}"
@@ -14,7 +14,7 @@ job "operator_scheduler" {
 
       config {
         command = "bash"
-        args    = ["-c", "sleep 15000"]
+        args    = ["-c", "sleep 1"]
       }
     }
   }

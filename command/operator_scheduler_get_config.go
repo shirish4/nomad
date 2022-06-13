@@ -41,7 +41,6 @@ func (o *OperatorSchedulerGetConfig) Run(args []string) int {
 	flags.Usage = func() { o.Ui.Output(o.Help()) }
 
 	if err := flags.Parse(args); err != nil {
-		o.Ui.Error(fmt.Sprintf("Failed to parse args: %v", err))
 		return 1
 	}
 
@@ -80,10 +79,10 @@ func (o *OperatorSchedulerGetConfig) Run(args []string) int {
 		fmt.Sprintf("Memory Oversubscription|%v", schedConfig.MemoryOversubscriptionEnabled),
 		fmt.Sprintf("Reject Job Registration|%v", schedConfig.RejectJobRegistration),
 		fmt.Sprintf("Pause Eval Broker|%v", schedConfig.PauseEvalBroker),
-		fmt.Sprintf("Preemtion System Scheduler|%v", schedConfig.PreemptionConfig.SystemSchedulerEnabled),
-		fmt.Sprintf("Preemtion Service Scheduler|%v", schedConfig.PreemptionConfig.ServiceSchedulerEnabled),
-		fmt.Sprintf("Preemtion Batch Scheduler|%v", schedConfig.PreemptionConfig.BatchSchedulerEnabled),
-		fmt.Sprintf("Preemtion SysBatch Scheduler|%v", schedConfig.PreemptionConfig.SysBatchSchedulerEnabled),
+		fmt.Sprintf("Preemption System Scheduler|%v", schedConfig.PreemptionConfig.SystemSchedulerEnabled),
+		fmt.Sprintf("Preemption Service Scheduler|%v", schedConfig.PreemptionConfig.ServiceSchedulerEnabled),
+		fmt.Sprintf("Preemption Batch Scheduler|%v", schedConfig.PreemptionConfig.BatchSchedulerEnabled),
+		fmt.Sprintf("Preemption SysBatch Scheduler|%v", schedConfig.PreemptionConfig.SysBatchSchedulerEnabled),
 	}))
 	return 0
 }
