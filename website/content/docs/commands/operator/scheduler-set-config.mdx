@@ -32,7 +32,7 @@ capability.
   limit, if the client has excess memory capacity. Tasks must specify memory_max
   to take advantage of memory oversubscription. Must be one of `[true|false]`.
 
-- `-reject-job-registration`- When true, the server will return permission denied
+- `-reject-job-registration` - When true, the server will return permission denied
   errors for job registration, job dispatch, and job scale APIs, unless the ACL
   token for the request is a management token. If ACLs are disabled, no user
   will be able to register jobs. This allows operators to shed load from automated

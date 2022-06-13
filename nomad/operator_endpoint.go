@@ -337,7 +337,7 @@ func (op *Operator) SchedulerSetConfiguration(args *structs.SchedulerSetConfigRe
 
 	reply.Index = index
 
-	// If we updated to configuration, handle any required state changes within
+	// If we updated the configuration, handle any required state changes within
 	// the eval broker and blocked evals processes. The state change and
 	// restore functions have protections around leadership transitions and
 	// restoring into non-running brokers.

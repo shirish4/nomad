@@ -30,7 +30,7 @@ func NewGenericNotifier() *GenericNotifier {
 	}
 }
 
-// Notify allows the implementer to notify all subscribers will a specific
+// Notify allows the implementer to notify all subscribers with a specific
 // update. There is no guarantee the order in which subscribers receive the
 // message which is sent linearly.
 func (g *GenericNotifier) Notify(msg interface{}) {
@@ -46,8 +46,8 @@ func (g *GenericNotifier) Notify(msg interface{}) {
 func (g *GenericNotifier) Run(stopCh <-chan struct{}) {
 
 	// Store our subscribers inline with a map. This map can only be accessed
-	// via a single channel update at a time, meaning we can manage with
-	// without using a lock.
+	// via a single channel update at a time, meaning we can manage without
+	// using a lock.
 	subscribers := map[chan interface{}]struct{}{}
 
 	for {
@@ -74,7 +74,7 @@ func (g *GenericNotifier) Run(stopCh <-chan struct{}) {
 
 // WaitForChange allows a subscriber to wait until there is a notification
 // change, or the timeout is reached. The function will block until one
-// condition ie met.
+// condition is met.
 func (g *GenericNotifier) WaitForChange(timeout time.Duration) interface{} {
 
 	// Create a channel and subscribe to any update. This channel is buffered
