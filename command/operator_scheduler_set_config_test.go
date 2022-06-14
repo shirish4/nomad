@@ -41,13 +41,12 @@ func TestOperatorSchedulerSetConfig_Run(t *testing.T) {
 		"-address=" + addr,
 		"-scheduler-algorithm=spread",
 		"-pause-eval-broker=true",
-		"-preemption-sysbatch-scheduler=true",
 		"-memory-oversubscription=true",
 		"-reject-job-registration=true",
-		"-preemption-batch-scheduler=true",
-		"-preemption-service-scheduler=true",
-		"-preemption-sysbatch-scheduler=true",
-		"-preemption-system-scheduler=false",
+		"-preempt-batch-scheduler=true",
+		"-preempt-service-scheduler=true",
+		"-preempt-sysbatch-scheduler=true",
+		"-preempt-system-scheduler=false",
 	}
 	require.EqualValues(t, 0, c.Run(modifyingArgs))
 	s := ui.OutputWriter.String()

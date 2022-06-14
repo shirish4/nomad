@@ -19,14 +19,14 @@ type OperatorSchedulerSetConfig struct {
 	// The scheduler configuration flags allow us to tell whether the user set
 	// a value or not. This means we can safely merge the current configuration
 	// with user supplied, selective updates.
-	schedulerAlgorithm          string
-	memoryOversubscription      flagHelper.BoolValue
-	rejectJobRegistration       flagHelper.BoolValue
-	pauseEvalBroker             flagHelper.BoolValue
-	preemptionBatchScheduler    flagHelper.BoolValue
-	preemptionServiceScheduler  flagHelper.BoolValue
-	preemptionSysBatchScheduler flagHelper.BoolValue
-	preemptionSystemScheduler   flagHelper.BoolValue
+	schedulerAlgorithm       string
+	memoryOversubscription   flagHelper.BoolValue
+	rejectJobRegistration    flagHelper.BoolValue
+	pauseEvalBroker          flagHelper.BoolValue
+	preemptBatchScheduler    flagHelper.BoolValue
+	preemptServiceScheduler  flagHelper.BoolValue
+	preemptSysBatchScheduler flagHelper.BoolValue
+	preemptSystemScheduler   flagHelper.BoolValue
 }
 
 func (o *OperatorSchedulerSetConfig) AutocompleteFlags() complete.Flags {
@@ -36,13 +36,13 @@ func (o *OperatorSchedulerSetConfig) AutocompleteFlags() complete.Flags {
 				string(api.SchedulerAlgorithmBinpack),
 				string(api.SchedulerAlgorithmSpread),
 			),
-			"-memory-oversubscription":       complete.PredictSet("true", "false"),
-			"-reject-job-registration":       complete.PredictSet("true", "false"),
-			"-pause-eval-broker":             complete.PredictSet("true", "false"),
-			"-preemption-batch-scheduler":    complete.PredictSet("true", "false"),
-			"-preemption-service-scheduler":  complete.PredictSet("true", "false"),
-			"-preemption-sysbatch-scheduler": complete.PredictSet("true", "false"),
-			"-preemption-system-scheduler":   complete.PredictSet("true", "false"),
+			"-memory-oversubscription":    complete.PredictSet("true", "false"),
+			"-reject-job-registration":    complete.PredictSet("true", "false"),
+			"-pause-eval-broker":          complete.PredictSet("true", "false"),
+			"-preempt-batch-scheduler":    complete.PredictSet("true", "false"),
+			"-preempt-service-scheduler":  complete.PredictSet("true", "false"),
+			"-preempt-sysbatch-scheduler": complete.PredictSet("true", "false"),
+			"-preempt-system-scheduler":   complete.PredictSet("true", "false"),
 		},
 	)
 }
@@ -62,10 +62,10 @@ func (o *OperatorSchedulerSetConfig) Run(args []string) int {
 	flags.Var(&o.memoryOversubscription, "memory-oversubscription", "")
 	flags.Var(&o.rejectJobRegistration, "reject-job-registration", "")
 	flags.Var(&o.pauseEvalBroker, "pause-eval-broker", "")
-	flags.Var(&o.preemptionBatchScheduler, "preemption-batch-scheduler", "")
-	flags.Var(&o.preemptionServiceScheduler, "preemption-service-scheduler", "")
-	flags.Var(&o.preemptionSysBatchScheduler, "preemption-sysbatch-scheduler", "")
-	flags.Var(&o.preemptionSystemScheduler, "preemption-system-scheduler", "")
+	flags.Var(&o.preemptBatchScheduler, "preempt-batch-scheduler", "")
+	flags.Var(&o.preemptServiceScheduler, "preempt-service-scheduler", "")
+	flags.Var(&o.preemptSysBatchScheduler, "preempt-sysbatch-scheduler", "")
+	flags.Var(&o.preemptSystemScheduler, "preempt-system-scheduler", "")
 
 	if err := flags.Parse(args); err != nil {
 		return 1
@@ -94,10 +94,10 @@ func (o *OperatorSchedulerSetConfig) Run(args []string) int {
 	o.memoryOversubscription.Merge(&schedulerConfig.MemoryOversubscriptionEnabled)
 	o.rejectJobRegistration.Merge(&schedulerConfig.RejectJobRegistration)
 	o.pauseEvalBroker.Merge(&schedulerConfig.PauseEvalBroker)
-	o.preemptionBatchScheduler.Merge(&schedulerConfig.PreemptionConfig.BatchSchedulerEnabled)
-	o.preemptionServiceScheduler.Merge(&schedulerConfig.PreemptionConfig.ServiceSchedulerEnabled)
-	o.preemptionSysBatchScheduler.Merge(&schedulerConfig.PreemptionConfig.SysBatchSchedulerEnabled)
-	o.preemptionSystemScheduler.Merge(&schedulerConfig.PreemptionConfig.SystemSchedulerEnabled)
+	o.preemptBatchScheduler.Merge(&schedulerConfig.PreemptionConfig.BatchSchedulerEnabled)
+	o.preemptServiceScheduler.Merge(&schedulerConfig.PreemptionConfig.ServiceSchedulerEnabled)
+	o.preemptSysBatchScheduler.Merge(&schedulerConfig.PreemptionConfig.SysBatchSchedulerEnabled)
+	o.preemptSystemScheduler.Merge(&schedulerConfig.PreemptionConfig.SystemSchedulerEnabled)
 
 	// Check-and-set the new configuration.
 	result, _, err := client.Operator().SchedulerCASConfiguration(schedulerConfig, nil)
@@ -152,19 +152,19 @@ Scheduler Set Config Options:
     When set to true, the eval broker which usually runs on the leader will be
     disabled. This will prevent the scheduler workers from receiving new work.
 
-  -preemption-batch-scheduler=[true|false]
+  -preempt-batch-scheduler=[true|false]
     Specifies whether preemption for batch jobs is enabled. Note that if this
     is set to true, then batch jobs can preempt any other jobs.
 
-  -preemption-service-scheduler=[true|false]
+  -preempt-service-scheduler=[true|false]
     Specifies whether preemption for service jobs is enabled. Note that if this
     is set to true, then service jobs can preempt any other jobs.
 
-  -preemption-sysbatch-scheduler=[true|false]
+  -preempt-sysbatch-scheduler=[true|false]
     Specifies whether preemption for system batch jobs is enabled. Note that if
     this is set to true, then system batch jobs can preempt any other jobs.
 
-  -preemption-system-scheduler=[true|false]
+  -preempt-system-scheduler=[true|false]
     Specifies whether preemption for system jobs is enabled. Note that if this
     is set to true, then system jobs can preempt any other jobs.
 `

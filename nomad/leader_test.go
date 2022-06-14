@@ -1676,12 +1676,14 @@ func TestServer_handleEvalBrokerStateChange(t *testing.T) {
 		name                        string
 	}{
 		{
+			startValue:                  false,
 			testServerCallBackConfig:    func(c *Config) { c.DefaultSchedulerConfig.PauseEvalBroker = false },
 			inputSchedulerConfiguration: nil,
 			expectedOutput:              true,
 			name:                        "bootstrap un-paused",
 		},
 		{
+			startValue:                  false,
 			testServerCallBackConfig:    func(c *Config) { c.DefaultSchedulerConfig.PauseEvalBroker = true },
 			inputSchedulerConfiguration: nil,
 			expectedOutput:              false,
