@@ -1,6 +1,10 @@
 package config
 
-import "github.com/hashicorp/nomad/helper"
+import (
+	"math"
+
+	"github.com/hashicorp/nomad/helper"
+)
 
 const (
 	// LimitsNonStreamingConnsPerClient is the number of connections per
@@ -40,6 +44,23 @@ type Limits struct {
 	// RPCMaxConnsPerClient is the maximum number of concurrent RPC
 	// connections from a single IP address. nil/0 means no limit.
 	RPCMaxConnsPerClient *int `hcl:"rpc_max_conns_per_client"`
+
+	// RPCDefaultWriteRate is the default maximum write RPC requests
+	// per endpoint per user per second. nil/0 means no limit.
+	RPCDefaultWriteRate *uint64 `hcl:"rpc_default_write_rate"`
+
+	// RPCDefaultReadRate is the default maximum read RPC requests per
+	// endpoint per user per second. nil/0 means no limit.
+	RPCDefaultReadRate *uint64 `hcl:"rpc_default_read_rate"`
+
+	// RPCDefaultListRate is the default maximum list RPC requests per
+	// endpoint per user per second. nil/0 means no limit.
+	RPCDefaultListRate *uint64 `hcl:"rpc_default_list_rate"`
+
+	// These are the RPC limits for individual RPC endpoints
+	Namespace *RPCEndpointLimits `hcl:"namespace"`
+	Job       *RPCEndpointLimits `hcl:"job"`
+	// TODO, etc...
 }
 
 // DefaultLimits returns the default limits values. User settings should be
@@ -50,6 +71,9 @@ func DefaultLimits() Limits {
 		HTTPMaxConnsPerClient: helper.IntToPtr(100),
 		RPCHandshakeTimeout:   "5s",
 		RPCMaxConnsPerClient:  helper.IntToPtr(100),
+		RPCDefaultWriteRate:   helper.Uint64ToPtr(math.MaxUint64),
+		RPCDefaultReadRate:    helper.Uint64ToPtr(math.MaxUint64),
+		RPCDefaultListRate:    helper.Uint64ToPtr(math.MaxUint64),
 	}
 }
 
@@ -70,6 +94,17 @@ func (l *Limits) Merge(o Limits) Limits {
 	if o.RPCMaxConnsPerClient != nil {
 		m.RPCMaxConnsPerClient = helper.IntToPtr(*o.RPCMaxConnsPerClient)
 	}
+	if o.RPCDefaultWriteRate != nil {
+		m.RPCDefaultWriteRate = helper.Uint64ToPtr(*o.RPCDefaultWriteRate)
+	}
+	if o.RPCDefaultReadRate != nil {
+		m.RPCDefaultReadRate = helper.Uint64ToPtr(*o.RPCDefaultReadRate)
+	}
+	if o.RPCDefaultListRate != nil {
+		m.RPCDefaultListRate = helper.Uint64ToPtr(*o.RPCDefaultListRate)
+	}
+
+	m.Namespace = m.Namespace.Merge(*o.Namespace)
 
 	return m
 }
@@ -82,6 +117,51 @@ func (l *Limits) Copy() Limits {
 	}
 	if l.RPCMaxConnsPerClient != nil {
 		c.RPCMaxConnsPerClient = helper.IntToPtr(*l.RPCMaxConnsPerClient)
+	}
+	if l.RPCDefaultWriteRate != nil {
+		c.RPCDefaultWriteRate = helper.Uint64ToPtr(*l.RPCDefaultWriteRate)
+	}
+	if l.RPCDefaultReadRate != nil {
+		c.RPCDefaultReadRate = helper.Uint64ToPtr(*l.RPCDefaultReadRate)
+	}
+	if l.RPCDefaultListRate != nil {
+		c.RPCDefaultListRate = helper.Uint64ToPtr(*l.RPCDefaultListRate)
+	}
+	c.Namespace = l.Namespace.Copy()
+
+	return c
+}
+
+type RPCEndpointLimits struct {
+	RPCWriteRate *uint64 `hcl:"rpc_write_rate"`
+	RPCReadRate  *uint64 `hcl:"rpc_read_rate"`
+	RPCListRate  *uint64 `hcl:"rpc_list_rate"`
+}
+
+func (l *RPCEndpointLimits) Merge(o RPCEndpointLimits) *RPCEndpointLimits {
+	m := l
+	if o.RPCWriteRate != nil {
+		m.RPCWriteRate = helper.Uint64ToPtr(*o.RPCWriteRate)
+	}
+	if o.RPCReadRate != nil {
+		m.RPCReadRate = helper.Uint64ToPtr(*o.RPCReadRate)
+	}
+	if o.RPCListRate != nil {
+		m.RPCListRate = helper.Uint64ToPtr(*o.RPCListRate)
+	}
+	return m
+}
+
+func (l *RPCEndpointLimits) Copy() *RPCEndpointLimits {
+	c := l
+	if l.RPCWriteRate != nil {
+		c.RPCWriteRate = helper.Uint64ToPtr(*l.RPCWriteRate)
+	}
+	if l.RPCReadRate != nil {
+		c.RPCReadRate = helper.Uint64ToPtr(*l.RPCReadRate)
+	}
+	if l.RPCListRate != nil {
+		c.RPCListRate = helper.Uint64ToPtr(*l.RPCListRate)
 	}
 	return c
 }
