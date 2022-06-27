@@ -822,8 +822,10 @@ type EvalUpdateRequest struct {
 	WriteRequest
 }
 
-// EvalDeleteRequest is used for deleting an evaluation.
-type EvalDeleteRequest struct {
+// EvalReapRequest is used for reaping evaluations and allocation. This action
+// is performed by the core scheduler which is periodic, or manually by
+// operators using the eval delete RPC.
+type EvalReapRequest struct {
 	Evals  []string
 	Allocs []string
 	WriteRequest

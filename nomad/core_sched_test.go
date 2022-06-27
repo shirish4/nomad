@@ -1852,7 +1852,7 @@ func TestCoreScheduler_PartitionEvalReap(t *testing.T) {
 	core := NewCoreScheduler(s1, snap)
 
 	// Set the max ids per reap to something lower.
-	maxIdsPerReap = 2
+	structs.MaxUUIDsPerWriteRequest = 2
 
 	evals := []string{"a", "b", "c"}
 	allocs := []string{"1", "2", "3"}
@@ -1895,7 +1895,7 @@ func TestCoreScheduler_PartitionDeploymentReap(t *testing.T) {
 	core := NewCoreScheduler(s1, snap)
 
 	// Set the max ids per reap to something lower.
-	maxIdsPerReap = 2
+	structs.MaxUUIDsPerWriteRequest = 2
 
 	deployments := []string{"a", "b", "c"}
 	requests := core.(*CoreScheduler).partitionDeploymentReap(deployments)
@@ -1929,7 +1929,7 @@ func TestCoreScheduler_PartitionJobReap(t *testing.T) {
 	core := NewCoreScheduler(s1, snap)
 
 	// Set the max ids per reap to something lower.
-	maxIdsPerReap = 2
+	structs.MaxUUIDsPerWriteRequest = 2
 
 	jobs := []*structs.Job{mock.Job(), mock.Job(), mock.Job()}
 	requests := core.(*CoreScheduler).partitionJobReap(jobs, "")
